@@ -12,7 +12,7 @@ let codePage = 'utf-8';
 //if (arguments[1] == 'jp') codePage = arguments[1];
 //!implement CP932 support
 
-var binFile = fs.readFileSync(fileName);
+let binFile = fs.readFileSync(fileName);
 
 if (binFile.toString('hex', 0, 4) !== '20070319') {
     console.log("Not 20070319 .bin file");
@@ -27,11 +27,11 @@ jsonObject.types = {};
 const parameterTypes = [
     'string',                       // 00: Strings, separated with 0x00;
     'string_tbl',                   // 01: Strings, separated with 0x00 with table after last 0x00;
-    'string_idx',               // 02: Strings, 2 bytes for ID it's used from, then the value and 0x00;
+    'string_idx',                   // 02: Strings, 2 bytes for ID it's used from, then the value and 0x00;
 
     'value',                        // 03: Integers as text like 00;
     'value_tbl',                    // 04:  Integers as text. Same as 01 - table after 0x00;
-    'value_idx',                // 05:  Integers as text. Same as 02;
+    'value_idx',                    // 05:  Integers as text. Same as 02;
 
     'special_scenariocategory',     // 06:  4 byte hex values, not separated, 0xFFFFFFFF is "empty";
     'special_scenariostatus',       // 07: or sometimes special_scenariocompare; 4 Byte hex values, separated by 0xFFFFFFFF;
@@ -107,7 +107,8 @@ for (let currentParam = 0; currentParam < parameterAmount; currentParam++) {
                 currentByte += 2;
                 let wordEndByte = currentByte;
                 while ((parameterBuffer[wordEndByte] != 0x00) && (wordEndByte < parameterBuffer.length)) wordEndByte++;
-                jsonObject[entryID][parameterName] = parameterBuffer.toString(codePage, currentByte, wordEndByte);
+                for (let i = entryID; i < Object.keys(jsonObject).length - 1; i++)
+                    jsonObject[i][parameterName] = parameterBuffer.toString(codePage, currentByte, wordEndByte);
                 currentByte = wordEndByte + 1;
                 currentWord++;
             }
@@ -145,6 +146,5 @@ for (let currentParam = 0; currentParam < parameterAmount; currentParam++) {
 
     currentPosition += parameterSize;
 }
-//console.log(jsonObject);
 
 fs.writeFileSync(fileName + ".json", JSON.stringify(jsonObject, null, 2));
