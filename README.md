@@ -1,4 +1,4 @@
-# Yakuza-2007.03.19-bin-file-exporter-importer
+# Yakuza 2007.03.19 .bin file editor
 20070319 .bin files to JSON exporter.
 
 Exporter for .bin files from Yakuza games and other games by RGG Studio.
