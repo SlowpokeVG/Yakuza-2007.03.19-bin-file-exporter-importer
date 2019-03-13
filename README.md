@@ -10,6 +10,8 @@ This file format was created on 19th March 2007 and this date is used in header 
 2. Make changes;
 3. 20070319importer.js item.bin_c.json
 
+If exes won't work - install node.js and use scripts directly.
+
 ## TODO
 
 -Support for Japanese CP932 files.
