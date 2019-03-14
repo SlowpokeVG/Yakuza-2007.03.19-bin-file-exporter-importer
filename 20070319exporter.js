@@ -44,7 +44,11 @@ const parameterTypes = [
     'itemid',                       // 0B: 4 byte int values, go one after another;
 
     'comment',                      // 0C: Never encountered in game files, so not implemented;
-    'BGM_ID'                        // 0D: 4 byte values, not separated, 0xFFFFFFFF is "empty";
+    'BGM_ID',                        // 0D: 4 byte values, not separated, 0xFFFFFFFF is "empty";
+    'unknown',                      // 0E: Never encountered in game files, so not implemented;
+    'USE_COUNTER',                  // 0F: 4 byte int values, go one after another;
+    'ENTITY_UID'                    // 10: 4 byte values, not separated, 0xFFFFFFFF is "empty";
+
 ]
 
 console.log(parameterAmount + " parameters");
@@ -115,7 +119,7 @@ for (let currentParam = 0; currentParam < parameterAmount; currentParam++) {
 
             break;
 
-        case 6: case 9: case 13:
+        case 6: case 9: case 13: case 16:
             let hexValues = parameterBuffer.toString('hex').match(/.{1,8}/g);
             for (let currentEntry = 0; currentEntry < entryAmount; currentEntry++) {
                 jsonObject[currentEntry][parameterName] = hexValues[currentEntry];
@@ -129,7 +133,7 @@ for (let currentParam = 0; currentParam < parameterAmount; currentParam++) {
             }
             break;
 
-        case 10: case 11:
+        case 10: case 11: case 15:
             let specialvalues = parameterBuffer.toString('hex').match(/.{1,8}/g);
             for (let currentEntry = 0; currentEntry < entryAmount; currentEntry++) {
                 jsonObject[currentEntry][parameterName] = parseInt(specialvalues[currentEntry], 16);
@@ -140,7 +144,7 @@ for (let currentParam = 0; currentParam < parameterAmount; currentParam++) {
             console.log('Comments are available. Please send file to script developer for analysis.')
             break;
 
-        default:
+        case 14: default:
             console.log('Unknown parameter type ' + parameterType);
     }
 

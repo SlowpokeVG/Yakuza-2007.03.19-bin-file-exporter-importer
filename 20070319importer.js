@@ -36,7 +36,10 @@ const parameterTypes = [
     'itemid',                       // 0B: 4 byte int values, go one after another;
 
     'comment',                      // 0C: Never encountered in game files, so not implemented;
-    'BGM_ID'                        // 0D: 4 byte values, not separated, 0xFFFFFFFF is "empty";
+    'BGM_ID',                        // 0D: 4 byte values, not separated, 0xFFFFFFFF is "empty";
+    'unknown',                      // 0E: Never encountered in game files, so not implemented;
+    'USE_COUNTER',                  // 0F: 4 byte int values, go one after another;
+    'ENTITY_UID'                    // 10: 4 byte values, not separated, 0xFFFFFFFF is "empty";
 ]
 
 
@@ -150,13 +153,15 @@ for (let currentParameter = 0; currentParameter < parameterCount; currentParamet
         case 'BGM_ID':
         case 'special_value':
         case 'itemid':
+        case 'USE_COUNTER':
+        case 'ENTITY_UID':
             {
                 let entriesString = '';
                 for (let i = 0; i < entriesWithParameter.length; i++) {
                     entriesString += ('00000000' + jsonFile[entriesWithParameter[i]][parameterName].toString(16).toUpperCase()).slice(-8);;
                 }
                 binBody[currentParameter] = Buffer.from(entriesString, 'hex');
-                console.log(binBody[currentParameter])
+
                 binHeader.writeInt32BE(entriesWithParameter.length, 16 + currentParameter * 64 + 52);
                 binHeader.writeInt32BE(binBody[currentParameter].length, 16 + currentParameter * 64 + 56);
                 break;
