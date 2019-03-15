@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const jconv = require('jconv');
 
 let arguments = process.argv.slice(2);
 if (arguments.length < 1)
@@ -57,7 +58,7 @@ for (let currentEntry = 0; currentEntry < entryAmount; currentEntry++) {
 }
 
 for (let currentParam = 0; currentParam < parameterAmount; currentParam++) {
-    let parameterName = binFile.toString('utf-8', 16 + 64 * currentParam, 16 + 64 * currentParam + 48).replace(/\0(?![^\0])/g, '');
+    let parameterName = jconv.decode(binFile.slice(16 + 64 * currentParam, 16 + 64 * currentParam + 48), 'SJIS').replace(/\0(?![^\0])/g, '');
     let parameterType = binFile.readInt32BE(16 + 64 * currentParam + 48);
     let parameterCount = binFile.readInt32BE(16 + 64 * currentParam + 52);
     let parameterSize = binFile.readInt32BE(16 + 64 * currentParam + 56);
@@ -72,14 +73,14 @@ for (let currentParam = 0; currentParam < parameterAmount; currentParam++) {
     switch (parameterType) {
 
         case 0: case 3: case 8:
-            let strings = parameterBuffer.toString('utf-8').split('\0');
+            let strings = jconv.decode(parameterBuffer, 'SJIS').split('\0');
             for (let currentEntry = 0; currentEntry < entryAmount; currentEntry++) {
                 jsonObject[currentEntry][parameterName] = strings[currentEntry];
             }
             break;
 
         case 1: case 4:
-            let stringsForTable = parameterBuffer.toString('utf-8').split('\0', parameterCount);
+            let stringsForTable = jconv.decode(parameterBuffer, 'SJIS').split('\0', parameterCount);
             let tableStart = 0;
             let wordCount = 0;
 
@@ -107,7 +108,7 @@ for (let currentParam = 0; currentParam < parameterAmount; currentParam++) {
                 let wordEndByte = currentByte;
                 while ((parameterBuffer[wordEndByte] != 0x00) && (wordEndByte < parameterBuffer.length)) wordEndByte++;
                 for (let i = entryID; i < Object.keys(jsonObject).length - 1; i++)
-                    jsonObject[i][parameterName] = parameterBuffer.toString('utf-8', currentByte, wordEndByte);
+                    jsonObject[i][parameterName] = jconv.decode(parameterBuffer.slice(currentByte, wordEndByte), 'SJIS');
                 currentByte = wordEndByte + 1;
                 currentWord++;
             }

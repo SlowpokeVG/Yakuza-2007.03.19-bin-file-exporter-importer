@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const jconv = require('jconv');
 
 let arguments = process.argv.slice(2);
 if (arguments.length < 1)
@@ -67,7 +68,7 @@ for (let currentParameter = 0; currentParameter < parameterCount; currentParamet
                     entriesString += '\0';
                 }
                 entriesString += '\0\0';
-                binBody[currentParameter] = Buffer.from(entriesString);
+                binBody[currentParameter] = Buffer.from(jconv.convert(entriesString, 'utf-8', 'SJIS'));
 
                 binHeader.writeInt32BE(entriesWithParameter.length, 16 + currentParameter * 64 + 52);
                 binHeader.writeInt32BE(binBody[currentParameter].length, 16 + currentParameter * 64 + 56);
@@ -172,7 +173,7 @@ for (let currentParameter = 0; currentParameter < parameterCount; currentParamet
             break;
     }
 
-    binHeader.write(parameterName, 16 + currentParameter * 64, 'utf-8');
+    jconv.encode(parameterName, 'SJIS').copy(binHeader, 16 + currentParameter * 64);
     binHeader.writeInt32BE(parameterTypes.indexOf(parameterType), 16 + currentParameter * 64 + 48);
 
 }
