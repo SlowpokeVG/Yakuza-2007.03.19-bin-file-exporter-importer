@@ -173,7 +173,7 @@ for (let currentParameter = 0; currentParameter < parameterCount; currentParamet
             break;
 
         default:
-            console.log("Unknown parameter type.")
+            throw "Unknown parameter type.";
             break;
     }
 

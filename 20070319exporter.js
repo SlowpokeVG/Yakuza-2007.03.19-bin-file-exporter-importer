@@ -145,7 +145,7 @@ for (let currentParam = 0; currentParam < parameterAmount; currentParam++) {
             break;
 
         case 14: default:
-            console.log('Unknown parameter type ' + parameterType);
+            throw 'Unknown parameter type ' + parameterType;
     }
 
     currentPosition += parameterSize;
