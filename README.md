@@ -12,7 +12,3 @@ This file format was created on 19th March 2007 and this date is used in header 
 
 If exes won't work - install node.js and use scripts directly.
 If text comes out as gibberish - use CP932 exe.
-
-## TODO
-
--Support for Japanese CP932 files.
