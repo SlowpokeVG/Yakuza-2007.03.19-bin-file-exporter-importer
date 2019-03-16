@@ -93,7 +93,6 @@ for (let currentParameter = 0; currentParameter < parameterCount; currentParamet
                 }
                 for (let i = 0; i < entryCount; i++) {
                     entriesString += ('00' + (uniqueEntries.indexOf(jsonFile[i][parameterName])).toString(16)).slice(-2);
-                    //entriesString += '00';
                 }
 
                 entriesString += '0000';
@@ -165,7 +164,8 @@ for (let currentParameter = 0; currentParameter < parameterCount; currentParamet
 
 
         case 'comment':
-            console.log("Comments won't be imported, since it is unknown how to store them.")
+            console.log("Comments won't be imported, since it is unknown how to store them.");
+            binBody[currentParameter] = Buffer.from('');
             break;
 
         default:
