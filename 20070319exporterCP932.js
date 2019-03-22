@@ -102,13 +102,16 @@ for (let currentParam = 0; currentParam < parameterAmount; currentParam++) {
 
             let currentByte = 0;
             let currentWord = 0;
+            for (let i = 0; i < Object.keys(jsonObject).length - 1; i++) {
+                jsonObject[i][parameterName] = "";
+            }
+
             while ((currentWord < parameterCount) && (currentByte < parameterBuffer.length)) {
                 const entryID = parameterBuffer.readInt16BE(currentByte);
                 currentByte += 2;
                 let wordEndByte = currentByte;
                 while ((parameterBuffer[wordEndByte] != 0x00) && (wordEndByte < parameterBuffer.length)) wordEndByte++;
-                for (let i = entryID; i < Object.keys(jsonObject).length - 1; i++)
-                    jsonObject[i][parameterName] = jconv.decode(parameterBuffer.slice(currentByte, wordEndByte), 'SJIS');
+                jsonObject[entryID][parameterName] = jconv.decode(parameterBuffer.slice(currentByte, wordEndByte), 'SJIS');
                 currentByte = wordEndByte + 1;
                 currentWord++;
             }

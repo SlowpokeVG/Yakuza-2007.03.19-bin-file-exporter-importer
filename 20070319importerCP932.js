@@ -107,18 +107,15 @@ for (let currentParameter = 0; currentParameter < parameterCount; currentParamet
         case 'value_idx':
             {
                 let entriesString = '';
-                let currentEntryString;
                 let entryCount = 0;
 
                 for (let i = 0; i < entriesWithParameter.length; i++) {
-                    if (currentEntryString != jsonFile[entriesWithParameter[i]][parameterName]) {
+                    if (jsonFile[entriesWithParameter[i]][parameterName] !== '') {
                         entriesString += ('0000' + entriesWithParameter[i].toString(16).toUpperCase()).slice(-4);
                         entriesString += new Buffer.from(jsonFile[entriesWithParameter[i]][parameterName]).toString('hex');
                         entriesString += '00';
                         entryCount++;
                     }
-
-                    currentEntryString = jsonFile[entriesWithParameter[i]][parameterName];
                 }
                 entriesString += '0000';
                 binBody[currentParameter] = Buffer.from(entriesString, 'hex');
