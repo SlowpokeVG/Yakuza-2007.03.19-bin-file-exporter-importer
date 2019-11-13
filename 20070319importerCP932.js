@@ -76,34 +76,55 @@ for (let currentParameter = 0; currentParameter < parameterCount; currentParamet
             }
 
         case 'string_tbl':
+
         case 'value_tbl':
-            {
-                let entriesString = '';
-                let uniqueEntries = []
-
-                for (let i = 0; i < entriesWithParameter.length; i++) {
-                    uniqueEntries.push(jsonFile[entriesWithParameter[i]][parameterName]);
+                {
+                    let entriesString = '';
+                    let uniqueEntries = []
+    
+                    for (let i = 0; i < entriesWithParameter.length; i++) {
+                        uniqueEntries.push(jsonFile[entriesWithParameter[i]][parameterName]);
+                    }
+    
+                    uniqueEntries = uniqueEntries.filter((v, i, a) => a.indexOf(v) === i);
+    
+                    for (let i = 0; i < uniqueEntries.length; i++) {
+                        entriesString += new Buffer.from(uniqueEntries[i]).toString('hex');
+                        entriesString += '00';
+                    }
+                    for (let i = 0; i < entryCount; i++) {
+                        entriesString += ('00' + (uniqueEntries.indexOf(jsonFile[i][parameterName])).toString(16)).slice(-2);
+                    }
+    
+                    entriesString += '0000';
+                    binBody[currentParameter] = Buffer.from(entriesString, 'hex');
+    
+                    binHeader.writeInt32BE(uniqueEntries.length, 16 + currentParameter * 64 + 52);
+                    binHeader.writeInt32BE(binBody[currentParameter].length, 16 + currentParameter * 64 + 56);
+                    break;
                 }
-
-                uniqueEntries = uniqueEntries.filter((v, i, a) => a.indexOf(v) === i);
-
-                for (let i = 0; i < uniqueEntries.length; i++) {
-                    entriesString += new Buffer.from(uniqueEntries[i]).toString('hex');
-                    entriesString += '00';
-                }
-                for (let i = 0; i < entryCount; i++) {
-                    entriesString += ('00' + (uniqueEntries.indexOf(jsonFile[i][parameterName])).toString(16)).slice(-2);
-                }
-
-                entriesString += '0000';
-                binBody[currentParameter] = Buffer.from(entriesString, 'hex');
-
-                binHeader.writeInt32BE(uniqueEntries.length, 16 + currentParameter * 64 + 52);
-                binHeader.writeInt32BE(binBody[currentParameter].length, 16 + currentParameter * 64 + 56);
-                break;
-            }
 
         case 'string_idx':
+                {
+                    let entriesString = '';
+                    let entryCount = 0;
+    
+                    for (let i = 0; i < entriesWithParameter.length; i++) {
+                        if (jsonFile[entriesWithParameter[i]][parameterName] !== '') {
+                            entriesString += ('0000' + entriesWithParameter[i].toString(16).toUpperCase()).slice(-4);
+                            entriesString += new Buffer.from(jconv.convert(jsonFile[entriesWithParameter[i]][parameterName], 'utf-8', 'SJIS')).toString('hex');
+                            entriesString += '00';
+                            entryCount++;
+                        }
+                    }
+                    entriesString += '0000';
+                    binBody[currentParameter] = Buffer.from(entriesString, 'hex');
+    
+                    binHeader.writeInt32BE(entryCount, 16 + currentParameter * 64 + 52);
+                    binHeader.writeInt32BE(binBody[currentParameter].length, 16 + currentParameter * 64 + 56);
+    
+                    break;
+                }          
         case 'value_idx':
             {
                 let entriesString = '';
