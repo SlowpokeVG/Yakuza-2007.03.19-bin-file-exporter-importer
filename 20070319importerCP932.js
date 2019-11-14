@@ -76,7 +76,32 @@ for (let currentParameter = 0; currentParameter < parameterCount; currentParamet
             }
 
         case 'string_tbl':
+            {
+                let entriesString = '';
+                let uniqueEntries = []
 
+                for (let i = 0; i < entriesWithParameter.length; i++) {
+                    uniqueEntries.push(jsonFile[entriesWithParameter[i]][parameterName]);
+                }
+
+                uniqueEntries = uniqueEntries.filter((v, i, a) => a.indexOf(v) === i);
+
+                for (let i = 0; i < uniqueEntries.length; i++) 
+                {
+                    entriesString += new Buffer.from(jconv.convert(uniqueEntries[i], 'utf-8', 'SJIS')).toString('hex');
+                    entriesString += '00';
+                }
+                for (let i = 0; i < entryCount; i++) {
+                    entriesString += ('00' + (uniqueEntries.indexOf(jsonFile[i][parameterName])).toString(16)).slice(-2);
+                }
+
+                entriesString += '0000';
+                binBody[currentParameter] = Buffer.from(entriesString, 'hex');
+
+                binHeader.writeInt32BE(uniqueEntries.length, 16 + currentParameter * 64 + 52);
+                binHeader.writeInt32BE(binBody[currentParameter].length, 16 + currentParameter * 64 + 56);
+                break;
+            }
         case 'value_tbl':
                 {
                     let entriesString = '';
